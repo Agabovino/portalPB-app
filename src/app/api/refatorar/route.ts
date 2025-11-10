@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import NoticiaModel from '@/models/Noticia';
-import gemini from '@/lib/gemini';
+import openai from '@/lib/openai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
-        // Refatorar com Gemini
-        const textoRefatorado = await gemini.refatorarNoticia(
+        // Refatorar com OpenAI
+        const textoRefatorado = await openai.refatorarNoticia(
           noticia.titulo,
           noticia.conteudoBruto
         );

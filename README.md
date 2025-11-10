@@ -45,7 +45,7 @@ On most Linux distributions using systemd (like Ubuntu), you can manage the Mong
 **1. Clone the repository**
 
 ```bash
-git clone <your-repository-url>
+git clone git@github.com:Agabovino/portalPB-app.git
 cd news-monitor-latest
 ```
 

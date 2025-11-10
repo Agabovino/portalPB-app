@@ -1,10 +1,12 @@
-// src/lib/gemini.ts
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// src/lib/openai.ts
+import OpenAI from 'openai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-export class GeminiRefactor {
-  private model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+export class OpenAIRefactor {
+  private model = 'gpt-3.5-turbo';
 
   async refatorarNoticia(titulo: string, conteudo: string): Promise<string> {
     const prompt = `
@@ -27,13 +29,16 @@ IMPORTANTE: Retorne APENAS o texto refatorado, sem explicações adicionais, com
 `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const response = await openai.chat.completions.create({
+        model: this.model,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+      });
+      const text = response.choices[0].message?.content;
       
-      return text.trim();
+      return text?.trim() || '';
     } catch (error) {
-      console.error('Erro ao refatorar com Gemini:', error);
+      console.error('Erro ao refatorar com OpenAI:', error);
       throw new Error('Falha ao refatorar o texto com a IA');
     }
   }
@@ -62,16 +67,19 @@ Retorne APENAS o resumo, sem prefixos como "Resumo:" ou outras explicações.
 `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const response = await openai.chat.completions.create({
+        model: this.model,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+      });
+      const text = response.choices[0].message?.content;
       
-      return text.trim();
+      return text?.trim() || '';
     } catch (error) {
-      console.error('Erro ao gerar resumo com Gemini:', error);
+      console.error('Erro ao gerar resumo com OpenAI:', error);
       throw new Error('Falha ao gerar resumo com a IA');
     }
   }
 }
 
-export default new GeminiRefactor();
+export default new OpenAIRefactor();

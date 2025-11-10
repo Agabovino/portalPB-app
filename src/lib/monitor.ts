@@ -3,7 +3,7 @@ import dbConnect from './db';
 import URLModel from '@/models/URL';
 import NoticiaModel from '@/models/Noticia';
 import scraper from './scraper';
-import gemini from './gemini';
+import openai from './openai';
 
 export class MonitoringService {
   private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
@@ -143,7 +143,7 @@ export class MonitoringService {
           let resumo = noticia.resumo;
           if (!resumo && conteudoBruto) {
             try {
-              resumo = await gemini.gerarResumo(noticia.titulo, conteudoBruto.substring(0, 1000));
+              resumo = await openai.gerarResumo(noticia.titulo, conteudoBruto.substring(0, 1000));
             } catch (error) {
               console.error('Erro ao gerar resumo:', error);
             }

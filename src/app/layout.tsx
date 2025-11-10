@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Monitor de Notícias com IA',
-  description: 'Plataforma de monitoramento e refatoração de notícias com Gemini AI',
+  description: 'Plataforma de monitoramento e refatoração de notícias com OpenAI',
 };
 
 export default function RootLayout({

@@ -1,10 +1,42 @@
 // src/lib/scraper.ts
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+import { load, type CheerioAPI } from 'cheerio';
+import type { Element } from 'domhandler';
 import { NoticiaScraped } from '@/types';
 
 export class Scraper {
   private userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
+
+  private scrapeG1Page($: CheerioAPI): NoticiaScraped[] {
+    const noticias: NoticiaScraped[] = [];
+    const jsonData = $('#bstn-container').text();
+
+    if (jsonData) {
+      try {
+        const data = JSON.parse(jsonData);
+        if (data && data.items) {
+          for (const item of data.items) {
+            if (item.content && item.content.type === 'materia') {
+              const content = item.content;
+              const imageUrl = content.image?.sizes?.S?.url || content.image?.url;
+
+              const noticia: NoticiaScraped = {
+                titulo: content.title,
+                url: content.url,
+                resumo: content.summary,
+                imagemUrl: imageUrl,
+                dataPublicacao: content.publication ? new Date(content.publication) : undefined,
+              };
+              noticias.push(noticia);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao fazer parse do JSON do G1:', error);
+      }
+    }
+    return noticias;
+  }
 
   async scrapePage(url: string): Promise<NoticiaScraped[]> {
     try {
@@ -15,7 +47,15 @@ export class Scraper {
         timeout: 10000,
       });
 
-      const $ = cheerio.load(response.data);
+      const $ = load(response.data);
+
+      if (url.includes('g1.globo.com')) {
+        const g1Noticias = this.scrapeG1Page($);
+        if (g1Noticias.length > 0) {
+          return g1Noticias;
+        }
+      }
+
       const noticias: NoticiaScraped[] = [];
 
       // Seletores genéricos comuns - podem ser personalizados por portal
@@ -52,7 +92,7 @@ export class Scraper {
     }
   }
 
-  private extractNoticiaData($: cheerio.CheerioAPI, element: cheerio.Element, pageUrl: string): NoticiaScraped | null {
+  private extractNoticiaData($: CheerioAPI, element: Element, pageUrl: string): NoticiaScraped | null {
     try {
       const $el = $(element);
 
@@ -122,7 +162,7 @@ export class Scraper {
         timeout: 10000,
       });
 
-      const $ = cheerio.load(response.data);
+      const $ = load(response.data);
 
       // Remover elementos indesejados
       $('script, style, nav, header, footer, aside, .comments, .ads, .advertisement').remove();
@@ -188,7 +228,7 @@ export class Scraper {
           timeout: 10000,
         });
 
-        const $ = cheerio.load(response.data);
+        const $ = load(response.data);
         
         // Tenta encontrar o link da próxima página com seletores mais específicos primeiro
         let nextPageLink = $('a.pagination__next, a.next-page, a.next, a[rel="next"]').first();

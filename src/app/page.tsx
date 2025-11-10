@@ -45,7 +45,7 @@ export default function Home() {
             📰 Monitor de Notícias com IA
           </Typography>
           <Typography variant="subtitle1" color="text.secondary">
-            Monitoramento em tempo real com refatoração automática via Gemini
+            Monitoramento em tempo real com refatoração automática via OpenAI
           </Typography>
         </Box>
 
@@ -100,7 +100,7 @@ export default function Home() {
         {/* Footer */}
         <Box sx={{ mt: 6, textAlign: 'center', color: 'text.secondary' }}>
           <Typography variant="body2">
-            Desenvolvido com Next.js, Material UI e Gemini AI
+            Desenvolvido com Next.js, Material UI e OpenAI
           </Typography>
         </Box>
       </Container>
