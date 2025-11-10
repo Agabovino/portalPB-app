@@ -73,6 +73,7 @@ export default function Home() {
               <NewsList
                 refresh={refreshKey}
                 onSelectChange={setSelectedIds}
+                filterByActiveUrls={true}
               />
             </Grid>
             <Grid item xs={12} md={3}>

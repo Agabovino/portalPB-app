@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import NoticiaModel from '@/models/Noticia';
+import URLModel from '@/models/URL'; // Importar URLModel
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,6 +12,7 @@ export async function GET(request: NextRequest) {
     const categoria = searchParams.get('categoria');
     const refatorada = searchParams.get('refatorada');
     const selecionada = searchParams.get('selecionada');
+    const filterByActiveUrls = searchParams.get('filterByActiveUrls'); // Novo parâmetro
     const limit = parseInt(searchParams.get('limit') || '50');
     const skip = parseInt(searchParams.get('skip') || '0');
 
@@ -19,6 +21,13 @@ export async function GET(request: NextRequest) {
     if (categoria) filtro.categoria = categoria;
     if (refatorada !== null) filtro.refatorada = refatorada === 'true';
     if (selecionada !== null) filtro.selecionada = selecionada === 'true';
+
+    // Filtrar por URLs ativas se o parâmetro for true
+    if (filterByActiveUrls === 'true') {
+      const activeUrls = await URLModel.find({ ativo: true, pausado: false }).select('url');
+      const activeUrlStrings = activeUrls.map(urlDoc => urlDoc.url);
+      filtro.urlMonitorada = { $in: activeUrlStrings };
+    }
 
     const noticias = await NoticiaModel.find(filtro)
       .sort({ dataPublicacao: -1 })

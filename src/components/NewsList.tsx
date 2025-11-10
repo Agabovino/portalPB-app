@@ -33,15 +33,16 @@ interface Noticia {
 interface NewsListProps {
   refresh: number;
   onSelectChange: (selectedIds: string[]) => void;
-  showRefactoredOnly?: boolean; // Nova prop
+  showRefactoredOnly?: boolean;
+  filterByActiveUrls?: boolean; // Nova prop
 }
 
-export default function NewsList({ refresh, onSelectChange, showRefactoredOnly }: NewsListProps) {
+export default function NewsList({ refresh, onSelectChange, showRefactoredOnly, filterByActiveUrls }: NewsListProps) {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState('');
   const [filtroCategoria, setFiltroCategoria] = useState('todas');
-  const [filtroRefatorada, setFiltroRefatorada] = useState(showRefactoredOnly ? 'true' : 'todas'); // Inicializa com base na prop
+  const [filtroRefatorada, setFiltroRefatorada] = useState(showRefactoredOnly ? 'true' : 'todas');
   const [categorias, setCategorias] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -53,7 +54,7 @@ export default function NewsList({ refresh, onSelectChange, showRefactoredOnly }
 
   useEffect(() => {
     loadNoticias();
-  }, [refresh, filtroCategoria, filtroRefatorada, page]);
+  }, [refresh, filtroCategoria, filtroRefatorada, page, filterByActiveUrls]); // Adicionar filterByActiveUrls como dependência
 
   const loadNoticias = async () => {
     try {
@@ -68,6 +69,10 @@ export default function NewsList({ refresh, onSelectChange, showRefactoredOnly }
       
       if (filtroRefatorada !== 'todas') {
         url += `&refatorada=${filtroRefatorada}`;
+      }
+
+      if (filterByActiveUrls) { // Adicionar filtro por URLs ativas
+        url += `&filterByActiveUrls=true`;
       }
 
       const response = await fetch(url);

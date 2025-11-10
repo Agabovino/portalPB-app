@@ -48,6 +48,9 @@ export default function NewsCard({ noticia, onToggleSelect, onClick, onDelete }:
     onToggleSelect(noticia._id, event.target.checked);
   };
 
+  const urlObj = new URL(noticia.url);
+  const domain = urlObj.hostname.replace('www.', ''); // Remove 'www.' for cleaner display
+
   return (
     <Card
       onClick={onClick}
@@ -61,7 +64,7 @@ export default function NewsCard({ noticia, onToggleSelect, onClick, onDelete }:
         transition: 'all 0.3s ease',
         '&:hover': {
           boxShadow: onClick ? 8 : 6,
-          transform: onClick ? 'translateY(-6px)' : 'translateY(-4px)',
+          transform: `translateY(${onClick ? '-6px' : '-4px'})`,
         },
       }}
     >
@@ -118,11 +121,13 @@ export default function NewsCard({ noticia, onToggleSelect, onClick, onDelete }:
           {noticia.titulo}
         </Typography>
 
-        {/* Data */}
+        {/* Data e Fonte */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.secondary' }}>
           <CalendarIcon sx={{ fontSize: 16, mr: 0.5 }} />
           <Typography variant="caption">
             {format(new Date(noticia.dataPublicacao), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+            {' | '}
+            {domain}
           </Typography>
         </Box>
 
