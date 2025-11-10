@@ -38,17 +38,19 @@ interface Noticia {
 interface NewsCardProps {
   noticia: Noticia;
   onToggleSelect: (id: string, selected: boolean) => void;
-  showRefactored?: boolean;
+  onClick?: () => void;
 }
 
-export default function NewsCard({ noticia, onToggleSelect, showRefactored = false }: NewsCardProps) {
+export default function NewsCard({ noticia, onToggleSelect, onClick }: NewsCardProps) {
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onToggleSelect(noticia._id, event.target.checked);
   };
 
   return (
     <Card
+      onClick={onClick}
       sx={{
+        cursor: onClick ? 'pointer' : 'default',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -56,13 +58,13 @@ export default function NewsCard({ noticia, onToggleSelect, showRefactored = fal
         position: 'relative',
         transition: 'all 0.3s ease',
         '&:hover': {
-          boxShadow: 6,
-          transform: 'translateY(-4px)',
+          boxShadow: onClick ? 8 : 6,
+          transform: onClick ? 'translateY(-6px)' : 'translateY(-4px)',
         },
       }}
     >
       {/* Checkbox de seleção */}
-      {!showRefactored && (
+      {!onClick && (
         <Box sx={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}>
           <Checkbox
             checked={noticia.selecionada}
@@ -130,7 +132,7 @@ export default function NewsCard({ noticia, onToggleSelect, showRefactored = fal
         )}
 
         {/* Texto refatorado (se aplicável) */}
-        {showRefactored && noticia.textoRefatorado && (
+        {onClick && noticia.textoRefatorado && (
           <Box sx={{ mt: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
             <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
               {noticia.textoRefatorado.substring(0, 300)}

@@ -15,6 +15,7 @@ import {
   Pagination,
 } from '@mui/material';
 import NewsCard from './NewsCard';
+import NewsContentModal from './NewsContentModal'; // Importar o modal
 
 interface Noticia {
   _id: string;
@@ -32,18 +33,23 @@ interface Noticia {
 interface NewsListProps {
   refresh: number;
   onSelectChange: (selectedIds: string[]) => void;
+  showRefactoredOnly?: boolean; // Nova prop
 }
 
-export default function NewsList({ refresh, onSelectChange }: NewsListProps) {
+export default function NewsList({ refresh, onSelectChange, showRefactoredOnly }: NewsListProps) {
   const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState('');
   const [filtroCategoria, setFiltroCategoria] = useState('todas');
-  const [filtroRefatorada, setFiltroRefatorada] = useState('todas');
+  const [filtroRefatorada, setFiltroRefatorada] = useState(showRefactoredOnly ? 'true' : 'todas'); // Inicializa com base na prop
   const [categorias, setCategorias] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const itemsPerPage = 12;
+
+  // Estados para o modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedNewsContent, setSelectedNewsContent] = useState<{ title: string; content: string } | null>(null);
 
   useEffect(() => {
     loadNoticias();
@@ -109,6 +115,22 @@ export default function NewsList({ refresh, onSelectChange }: NewsListProps) {
     }
   };
 
+  // Funções para o modal
+  const handleCardClick = (noticia: Noticia) => {
+    if (showRefactoredOnly && noticia.textoRefatorado) {
+      setSelectedNewsContent({
+        title: noticia.titulo,
+        content: noticia.textoRefatorado,
+      });
+      setModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedNewsContent(null);
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -140,7 +162,7 @@ export default function NewsList({ refresh, onSelectChange }: NewsListProps) {
           </Select>
         </FormControl>
 
-        <FormControl size="small" sx={{ minWidth: 200 }}>
+        <FormControl size="small" sx={{ minWidth: 200 }} disabled={showRefactoredOnly}>
           <InputLabel>Status</InputLabel>
           <Select
             value={filtroRefatorada}
@@ -179,6 +201,7 @@ export default function NewsList({ refresh, onSelectChange }: NewsListProps) {
                 <NewsCard
                   noticia={noticia}
                   onToggleSelect={handleToggleSelect}
+                  onClick={showRefactoredOnly && noticia.textoRefatorado ? () => handleCardClick(noticia) : undefined}
                 />
               </Grid>
             ))}
@@ -197,6 +220,16 @@ export default function NewsList({ refresh, onSelectChange }: NewsListProps) {
             </Box>
           )}
         </>
+      )}
+
+      {/* Modal de Conteúdo da Notícia */}
+      {selectedNewsContent && (
+        <NewsContentModal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          title={selectedNewsContent.title}
+          content={selectedNewsContent.content}
+        />
       )}
     </Box>
   );
