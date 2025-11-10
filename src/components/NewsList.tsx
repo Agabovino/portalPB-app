@@ -131,6 +131,31 @@ export default function NewsList({ refresh, onSelectChange, showRefactoredOnly }
     setSelectedNewsContent(null);
   };
 
+  const handleDeleteNews = async (id: string) => {
+    if (!window.confirm('Tem certeza que deseja excluir esta notícia?')) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/noticias?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.sucesso) {
+        loadNoticias(); // Recarrega a lista de notícias
+      } else {
+        setErro(data.erro || 'Erro ao excluir notícia');
+      }
+    } catch (error) {
+      setErro('Erro ao conectar com o servidor para excluir notícia');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -202,6 +227,7 @@ export default function NewsList({ refresh, onSelectChange, showRefactoredOnly }
                   noticia={noticia}
                   onToggleSelect={handleToggleSelect}
                   onClick={showRefactoredOnly && noticia.textoRefatorado ? () => handleCardClick(noticia) : undefined}
+                  onDelete={showRefactoredOnly ? handleDeleteNews : undefined}
                 />
               </Grid>
             ))}

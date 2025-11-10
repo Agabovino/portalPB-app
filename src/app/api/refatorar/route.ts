@@ -29,17 +29,24 @@ export async function POST(request: NextRequest) {
           continue;
         }
 
+        console.log(`[Refactor API] Refatorando notícia ID: ${id}`);
+        console.log(`[Refactor API] Título original: ${noticia.titulo}`);
+        console.log(`[Refactor API] Conteúdo bruto (primeiros 200 chars): ${noticia.conteudoBruto?.substring(0, 200)}...`);
+
         // Refatorar com OpenAI
         const textoRefatorado = await openai.refatorarNoticia(
           noticia.titulo,
           noticia.conteudoBruto
         );
 
+        console.log(`[Refactor API] Texto refatorado (primeiros 200 chars): ${textoRefatorado?.substring(0, 200)}...`);
+
         // Atualizar no banco
         await NoticiaModel.findByIdAndUpdate(id, {
           textoRefatorado,
           refatorada: true,
         });
+        console.log(`[Refactor API] Notícia ID ${id} atualizada no banco.`);
 
         processadas++;
       } catch (error: any) {

@@ -18,6 +18,7 @@ import {
   CheckCircle as CheckIcon,
   Launch as LaunchIcon,
   CalendarToday as CalendarIcon,
+  Delete as DeleteIcon, // Importar o ícone de lixeira
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -39,9 +40,10 @@ interface NewsCardProps {
   noticia: Noticia;
   onToggleSelect: (id: string, selected: boolean) => void;
   onClick?: () => void;
+  onDelete?: (id: string) => void; // Nova prop para exclusão
 }
 
-export default function NewsCard({ noticia, onToggleSelect, onClick }: NewsCardProps) {
+export default function NewsCard({ noticia, onToggleSelect, onClick, onDelete }: NewsCardProps) {
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onToggleSelect(noticia._id, event.target.checked);
   };
@@ -148,6 +150,19 @@ export default function NewsCard({ noticia, onToggleSelect, onClick }: NewsCardP
             Ver Original
           </Button>
         </Link>
+        {onClick && onDelete && (
+          <Button
+            size="small"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={(e) => {
+              e.stopPropagation(); // Evita que o clique no botão ative o clique do card
+              onDelete(noticia._id);
+            }}
+          >
+            Excluir
+          </Button>
+        )}
       </CardActions>
     </Card>
   );

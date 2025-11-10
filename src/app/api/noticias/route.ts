@@ -71,3 +71,39 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+// DELETE - Excluir notícia
+export async function DELETE(request: NextRequest) {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { sucesso: false, erro: 'ID da notícia é obrigatório' },
+        { status: 400 }
+      );
+    }
+
+    const result = await NoticiaModel.findByIdAndDelete(id);
+
+    if (!result) {
+      return NextResponse.json(
+        { sucesso: false, erro: 'Notícia não encontrada' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      sucesso: true,
+      mensagem: 'Notícia excluída com sucesso',
+    });
+  } catch (error: any) {
+    console.error('Erro ao excluir notícia:', error);
+    return NextResponse.json(
+      { sucesso: false, erro: error.message },
+      { status: 500 }
+    );
+  }
+}

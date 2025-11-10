@@ -1,7 +1,6 @@
 // src/lib/scraper.ts
 import axios from 'axios';
 import { load, type CheerioAPI } from 'cheerio';
-import type { Element } from 'domhandler';
 import { NoticiaScraped } from '@/types';
 
 export class Scraper {
@@ -92,7 +91,7 @@ export class Scraper {
     }
   }
 
-  private extractNoticiaData($: CheerioAPI, element: Element, pageUrl: string): NoticiaScraped | null {
+  private extractNoticiaData($: CheerioAPI, element: any, pageUrl: string): NoticiaScraped | null {
     try {
       const $el = $(element);
 
