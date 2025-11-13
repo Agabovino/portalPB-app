@@ -1,9 +1,8 @@
 // src/app/layout.tsx
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import ThemeRegistry from '@/components/ThemeRegistry';
-
-const inter = Inter({ subsets: ['latin'] });
+import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { Box } from '@mui/material';
 
 export const metadata: Metadata = {
   title: 'Monitor de Notícias com IA',
@@ -17,8 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>
-        <ThemeRegistry>{children}</ThemeRegistry>
+      <body>
+        <ThemeRegistry>
+          <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 1300 }}>
+            <ThemeSwitcher />
+          </Box>
+          {children}
+        </ThemeRegistry>
       </body>
     </html>
   );

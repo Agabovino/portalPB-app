@@ -4,6 +4,8 @@ import dbConnect from '@/lib/db';
 import NoticiaModel from '@/models/Noticia';
 import openai from '@/lib/openai';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     await dbConnect();

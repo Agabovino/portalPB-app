@@ -12,7 +12,7 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { AddCircleOutline } from '@mui/icons-material';
 
 interface URLInputProps {
   onURLAdded: () => void;
@@ -74,18 +74,29 @@ export default function URLInput({ onURLAdded }: URLInputProps) {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-      <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-        📰 Adicionar Portal de Notícias
-      </Typography>
+    <Paper 
+      elevation={0} 
+      variant="outlined"
+      sx={{ 
+        p: { xs: 2, sm: 3 }, 
+        mb: 3,
+        bgcolor: 'background.paper',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+        <AddCircleOutline color="primary" />
+        <Typography variant="h6" component="h2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+          Adicionar Portal de Notícias
+        </Typography>
+      </Box>
 
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="URL do Portal"
-              placeholder="https://exemplo.com/politica"
+              label="URL do Portal *"
+              placeholder="https://..."
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               required
@@ -96,8 +107,8 @@ export default function URLInput({ onURLAdded }: URLInputProps) {
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Categoria"
-              placeholder="Política, Economia, etc."
+              label="Categoria *"
+              placeholder="Ex: Política, Esportes"
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
               required
@@ -134,9 +145,10 @@ export default function URLInput({ onURLAdded }: URLInputProps) {
               type="submit"
               variant="contained"
               size="large"
-              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <AddIcon />}
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <AddCircleOutline />}
               disabled={loading}
               fullWidth
+              sx={{ fontWeight: 600 }}
             >
               {loading ? 'Adicionando...' : 'Iniciar Monitoramento'}
             </Button>

@@ -13,12 +13,13 @@ import {
   Box,
   Button,
   Link,
+  useTheme,
 } from '@mui/material';
 import {
   CheckCircle as CheckIcon,
   Launch as LaunchIcon,
   CalendarToday as CalendarIcon,
-  Delete as DeleteIcon, // Importar o ícone de lixeira
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -40,16 +41,17 @@ interface NewsCardProps {
   noticia: Noticia;
   onToggleSelect: (id: string, selected: boolean) => void;
   onClick?: () => void;
-  onDelete?: (id: string) => void; // Nova prop para exclusão
+  onDelete?: (id: string) => void;
 }
 
 export default function NewsCard({ noticia, onToggleSelect, onClick, onDelete }: NewsCardProps) {
+  const theme = useTheme();
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onToggleSelect(noticia._id, event.target.checked);
   };
 
   const urlObj = new URL(noticia.url);
-  const domain = urlObj.hostname.replace('www.', ''); // Remove 'www.' for cleaner display
+  const domain = urlObj.hostname.replace('www.', '');
 
   return (
     <Card
@@ -59,109 +61,109 @@ export default function NewsCard({ noticia, onToggleSelect, onClick, onDelete }:
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        border: noticia.selecionada ? '2px solid #1976d2' : '1px solid #e0e0e0',
+        border: `1px solid ${noticia.selecionada ? theme.palette.primary.main : theme.palette.divider}`,
+        bgcolor: 'background.paper',
         position: 'relative',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          boxShadow: onClick ? 8 : 6,
-          transform: `translateY(${onClick ? '-6px' : '-4px'})`,
+          boxShadow: theme.shadows[onClick ? 8 : 4],
+          transform: `translateY(${onClick ? '-4px' : '-2px'})`,
+          borderColor: theme.palette.primary.main,
         },
       }}
     >
-      {/* Checkbox de seleção */}
       {!onClick && (
         <Box sx={{ position: 'absolute', top: 8, left: 8, zIndex: 1 }}>
           <Checkbox
             checked={noticia.selecionada}
             onChange={handleCheckboxChange}
             sx={{
-              bgcolor: 'white',
-              borderRadius: '4px',
-              '&:hover': { bgcolor: 'white' },
+              p: 0.5,
+              bgcolor: 'background.paper',
+              borderRadius: 1,
+              '&:hover': { bgcolor: 'background.default' },
             }}
           />
         </Box>
       )}
 
-      {/* Status de refatoração */}
       {noticia.refatorada && (
         <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1 }}>
           <Chip
-            icon={<CheckIcon />}
+            icon={<CheckIcon sx={{ color: '!important', ml: '6px' }} />}
             label="Refatorada"
             color="success"
             size="small"
+            sx={{ bgcolor: 'success.light', color: 'success.dark', fontWeight: 600 }}
           />
         </Box>
       )}
 
-      {/* Imagem */}
       {noticia.imagemUrl && (
         <CardMedia
           component="img"
-          height="200"
+          height="180"
           image={noticia.imagemUrl}
           alt={noticia.titulo}
           sx={{ objectFit: 'cover' }}
         />
       )}
 
-      <CardContent sx={{ flexGrow: 1 }}>
-        {/* Categoria */}
+      <CardContent sx={{ flexGrow: 1, p: 2 }}>
         <Chip
           label={noticia.categoria}
           size="small"
-          color="primary"
-          variant="outlined"
-          sx={{ mb: 1 }}
+          sx={{ 
+            mb: 1.5, 
+            bgcolor: 'primary.main', 
+            color: 'primary.contrastText', 
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            fontSize: '0.65rem',
+            letterSpacing: '0.5px',
+          }}
         />
 
-        {/* Título */}
-        <Typography variant="h6" component="h2" gutterBottom sx={{ fontWeight: 600 }}>
+        <Typography variant="h6" component="h2" gutterBottom sx={{ fontWeight: 700, color: 'text.primary', lineHeight: 1.3 }}>
           {noticia.titulo}
         </Typography>
 
-        {/* Data e Fonte */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.secondary' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, color: 'text.secondary' }}>
           <CalendarIcon sx={{ fontSize: 16, mr: 0.5 }} />
-          <Typography variant="caption">
-            {format(new Date(noticia.dataPublicacao), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+          <Typography variant="caption" sx={{ textTransform: 'capitalize' }}>
+            {format(new Date(noticia.dataPublicacao), "dd MMM yyyy", { locale: ptBR })}
             {' | '}
             {domain}
           </Typography>
         </Box>
 
-        {/* Resumo */}
         {noticia.resumo && (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary">
             {noticia.resumo}
           </Typography>
         )}
 
-        {/* Texto refatorado (se aplicável) */}
         {onClick && noticia.textoRefatorado && (
-          <Box sx={{ mt: 2, p: 2, bgcolor: '#f5f5f5', borderRadius: 1 }}>
-            <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
-              {noticia.textoRefatorado.substring(0, 300)}
-              {noticia.textoRefatorado.length > 300 && '...'}
+          <Box sx={{ mt: 2, p: 1.5, bgcolor: 'background.default', borderRadius: 1 }}>
+            <Typography variant="body2" sx={{ whiteSpace: 'pre-line', color: 'text.secondary' }}>
+              {noticia.textoRefatorado.substring(0, 200)}
+              {noticia.textoRefatorado.length > 200 && '...'}
             </Typography>
           </Box>
         )}
       </CardContent>
 
-      <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-        <Link href={noticia.url} target="_blank" rel="noopener noreferrer" underline="none">
-          <Button size="small" startIcon={<LaunchIcon />}>
-            Ver Original
-          </Button>
-        </Link>
+      <CardActions sx={{ justifyContent: 'space-between', p: 2, pt: 0 }}>
+        <Button size="small" startIcon={<LaunchIcon />} href={noticia.url} target="_blank" rel="noopener noreferrer">
+          Ver Original
+        </Button>
         {onClick && onDelete && (
           <Button
             size="small"
             color="error"
             startIcon={<DeleteIcon />}
             onClick={(e) => {
-              e.stopPropagation(); // Evita que o clique no botão ative o clique do card
+              e.stopPropagation();
               onDelete(noticia._id);
             }}
           >

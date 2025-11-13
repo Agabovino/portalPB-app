@@ -13,13 +13,16 @@ import {
   Chip,
   Tooltip,
   Alert,
+  Link,
 } from '@mui/material';
 import {
-  Delete as DeleteIcon,
-  Pause as PauseIcon,
-  PlayArrow as PlayIcon,
-  Refresh as RefreshIcon,
-  AccessTime as TimeIcon,
+  DeleteOutline,
+  PauseCircleOutline,
+  PlayCircleOutline,
+  Refresh,
+  BarChart,
+  Update,
+  Search,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -154,10 +157,21 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
   };
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-      <Typography variant="h5" gutterBottom sx={{ mb: 2 }}>
-        🔍 Monitoramento Ativo
-      </Typography>
+    <Paper 
+      elevation={0} 
+      variant="outlined"
+      sx={{ 
+        p: { xs: 2, sm: 3 }, 
+        mb: 3,
+        bgcolor: 'background.paper',
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+        <Search color="primary" />
+        <Typography variant="h6" component="h2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+          Monitoramento Ativo
+        </Typography>
+      </Box>
 
       {erro && (
         <Alert severity="error" sx={{ mb: 2 }} onClose={() => setErro('')}>
@@ -170,46 +184,44 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
           Nenhuma URL sendo monitorada no momento. Adicione uma URL acima para começar.
         </Alert>
       ) : (
-        <List>
+        <List sx={{ p: 0 }}>
           {urls.map((item) => (
             <ListItem
               key={item.urlId}
               sx={{
-                border: '1px solid #e0e0e0',
+                p: 2,
+                border: 1,
+                borderColor: 'divider',
                 borderRadius: 1,
-                mb: 1,
-                bgcolor: item.pausado ? '#f5f5f5' : 'white',
+                mb: 1.5,
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: 'flex-start',
               }}
               secondaryAction={
-                <Box>
+                <Box sx={{ alignSelf: { xs: 'flex-end', sm: 'center' }, mt: { xs: 1, sm: 0 } }}>
                   <Tooltip title="Atualizar agora">
                     <IconButton
-                      edge="end"
                       onClick={() => handleRefresh(item.urlId)}
                       disabled={loading}
-                      sx={{ mr: 1 }}
                     >
-                      <RefreshIcon />
+                      <Refresh />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={item.pausado ? 'Reativar' : 'Pausar'}>
                     <IconButton
-                      edge="end"
                       onClick={() => handleTogglePause(item.urlId, item.pausado)}
                       disabled={loading}
-                      sx={{ mr: 1 }}
                     >
-                      {item.pausado ? <PlayIcon /> : <PauseIcon />}
+                      {item.pausado ? <PlayCircleOutline /> : <PauseCircleOutline />}
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Remover">
                     <IconButton
-                      edge="end"
                       onClick={() => handleDelete(item.urlId)}
                       disabled={loading}
                       color="error"
                     >
-                      <DeleteIcon />
+                      <DeleteOutline />
                     </IconButton>
                   </Tooltip>
                 </Box>
@@ -217,27 +229,42 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
             >
               <ListItemText
                 primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                    <Link href={item.url} target="_blank" rel="noopener noreferrer" variant="body1" sx={{ fontWeight: 500, color: 'text.primary' }}>
                       {item.url}
-                    </Typography>
+                    </Link>
                     <Chip
                       label={item.pausado ? 'Pausado' : 'Ativo'}
                       color={item.pausado ? 'default' : 'success'}
                       size="small"
+                      sx={{
+                        ...(item.pausado ? {
+                          bgcolor: 'grey.200',
+                          color: 'grey.800',
+                        } : {
+                          bgcolor: 'success.light',
+                          color: 'success.dark',
+                        }),
+                        fontWeight: 500,
+                      }}
                     />
                   </Box>
                 }
                 secondary={
-                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                    <Typography variant="body2" color="text.secondary">
-                      📊 {item.totalNoticias} notícias coletadas
-                    </Typography>
-                    {item.ultimaColeta && (
-                      <Typography variant="body2" color="text.secondary">
-                        <TimeIcon sx={{ fontSize: 14, verticalAlign: 'middle', mr: 0.5 }} />
-                        Última coleta: {format(new Date(item.ultimaColeta), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
+                      <BarChart sx={{ fontSize: 16 }} />
+                      <Typography variant="body2">
+                        {item.totalNoticias} notícias coletadas
                       </Typography>
+                    </Box>
+                    {item.ultimaColeta && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
+                        <Update sx={{ fontSize: 16 }} />
+                        <Typography variant="body2">
+                          Última coleta: {format(new Date(item.ultimaColeta), "dd/MM/yy 'às' HH:mm", { locale: ptBR })}
+                        </Typography>
+                      </Box>
                     )}
                   </Box>
                 }
