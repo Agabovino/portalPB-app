@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '../../../lib/db';
 import NoticiaModel from '../../../models/Noticia';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();

@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import monitor from '@/lib/monitor';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const status = await monitor.getMonitoringStatus();

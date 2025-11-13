@@ -64,16 +64,28 @@ export default function AdvancedSearch({ onSearch }: AdvancedSearchProps) {
   const activeFiltersCount = Object.values(filters).filter(v => v !== '').length;
 
   return (
-    <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">
-          🔍 Busca Avançada
-        </Typography>
+    <Paper 
+      elevation={0} 
+      variant="outlined"
+      sx={{ 
+        p: { xs: 2, sm: 3 }, 
+        mb: 3,
+        bgcolor: 'background.paper',
+      }}
+    >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <SearchIcon color="primary" />
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            Busca Avançada
+          </Typography>
+        </Box>
         {activeFiltersCount > 0 && (
           <Chip
             label={`${activeFiltersCount} filtro(s) ativo(s)`}
             color="primary"
             size="small"
+            onDelete={handleClear}
           />
         )}
       </Box>
@@ -117,9 +129,9 @@ export default function AdvancedSearch({ onSearch }: AdvancedSearchProps) {
               onChange={(e) => setFilters({ ...filters, sentimento: e.target.value })}
             >
               <MenuItem value="">Todos</MenuItem>
-              <MenuItem value="POSITIVO">😊 Positivo</MenuItem>
-              <MenuItem value="NEUTRO">😐 Neutro</MenuItem>
-              <MenuItem value="NEGATIVO">😞 Negativo</MenuItem>
+              <MenuItem value="POSITIVO">Positivo</MenuItem>
+              <MenuItem value="NEUTRO">Neutro</MenuItem>
+              <MenuItem value="NEGATIVO">Negativo</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -153,6 +165,7 @@ export default function AdvancedSearch({ onSearch }: AdvancedSearchProps) {
             size="large"
             startIcon={<SearchIcon />}
             onClick={handleSearch}
+            sx={{ fontWeight: 600 }}
           >
             Buscar
           </Button>

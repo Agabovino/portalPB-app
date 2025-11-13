@@ -15,7 +15,7 @@ import URLInput from '@/components/URLInput';
 import MonitoringPanel from '@/components/MonitoringPanel';
 import NewsList from '@/components/NewsList';
 import RefactorPanel from '@/components/RefactorPanel';
-import { Feed } from '@mui/icons-material';
+import { Feed, Home as HomeIcon, Description, AutoAwesome, CheckCircle } from '@mui/icons-material';
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -54,9 +54,9 @@ export default function Home() {
         {/* Tabs */}
         <Paper sx={{ mb: 3, bgcolor: 'background.paper' }}>
           <Tabs value={tabValue} onChange={handleTabChange} centered>
-            <Tab label="🏠 Monitoramento" />
-            <Tab label="📝 Notícias" />
-            <Tab label="✨ Refatoradas" />
+            <Tab icon={<HomeIcon />} iconPosition="start" label="Monitoramento" />
+            <Tab icon={<Description />} iconPosition="start" label="Notícias" />
+            <Tab icon={<AutoAwesome />} iconPosition="start" label="Refatoradas" />
           </Tabs>
         </Paper>
 
@@ -90,8 +90,8 @@ export default function Home() {
         {/* Tab: Refatoradas */}
         {tabValue === 2 && (
           <Box>
-            <Typography variant="h5" gutterBottom sx={{ mb: 3, color: 'text.primary' }}>
-              ✅ Notícias Refatoradas
+            <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3, color: 'text.primary' }}>
+              <CheckCircle color="success" /> Notícias Refatoradas
             </Typography>
             <NewsList
               refresh={refreshKey}

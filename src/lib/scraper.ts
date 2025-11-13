@@ -114,17 +114,42 @@ export class Scraper {
 
       if (!urlNoticia) return null;
 
-      // Extrair imagem
-      const imagemUrl =
-        $el.find('img').first().attr('src') ||
-        $el.find('img').first().attr('data-src') ||
-        '';
+      // Extrair imagem de forma mais robusta
+      let imagemUrl =
+        $el.find('figure img').first().attr('src') ||
+        $el.find('figure img').first().attr('data-src') ||
+        $el.find('img[class*="featured"]').first().attr('src') ||
+        $el.find('img[class*="article-image"]').first().attr('src') ||
+        $el.find('img[class*="post-image"]').first().attr('src');
+
+      // Fallback se nenhuma das anteriores for encontrada
+      if (!imagemUrl) {
+        const allImages = $el.find('img');
+        if (allImages.length > 1) {
+          // Se houver mais de uma imagem, tente pegar a segunda,
+          // que tem mais chance de ser a imagem principal do que um avatar.
+          imagemUrl = allImages.eq(1).attr('src') || allImages.eq(1).attr('data-src');
+        } else {
+          imagemUrl = allImages.first().attr('src') || allImages.first().attr('data-src');
+        }
+      }
+      
+      if (!imagemUrl) {
+        // Tenta buscar a imagem no corpo do artigo como último recurso
+        const firstImageInContent = $el.find('div[class*="content"] img, section[class*="content"] img').first();
+        imagemUrl = firstImageInContent.attr('src') || firstImageInContent.attr('data-src');
+      }
+
+      let finalImageUrl = imagemUrl || '';
+      if (finalImageUrl && !finalImageUrl.startsWith('http')) {
+        finalImageUrl = new URL(finalImageUrl, pageUrl).href;
+      }
 
       // Extrair resumo
       const resumo =
         $el.find('p, .resumo, .excerpt, [class*="description"]').first().text().trim() ||
         '';
-
+      
       // Tentar extrair data
       const dataTexto =
         $el.find('time').attr('datetime') ||
@@ -142,7 +167,7 @@ export class Scraper {
       return {
         titulo,
         url: urlNoticia,
-        imagemUrl: imagemUrl || undefined,
+        imagemUrl: finalImageUrl || undefined,
         resumo: resumo || undefined,
         dataPublicacao,
       };
