@@ -100,7 +100,7 @@ export class MonitoringService {
     await this.startMonitoring(urlId);
   }
 
-  private async collectNews(urlId: string) {
+  public async collectNews(urlId: string) {
     await dbConnect();
     
     const urlDoc = await URLModel.findById(urlId);
@@ -241,6 +241,15 @@ export class MonitoringService {
     });
     this.monitoringIntervals.clear();
     console.log('🛑 Todos os monitoramentos foram parados');
+  }
+
+  async initialize() {
+    await dbConnect();
+    const urls = await URLModel.find({ ativo: true, pausado: false });
+    console.log(`🔎 Encontradas ${urls.length} URLs ativas para monitorar.`);
+    for (const url of urls) {
+      this.startMonitoring(url._id.toString());
+    }
   }
 }
 

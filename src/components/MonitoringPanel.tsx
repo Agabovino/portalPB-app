@@ -18,10 +18,12 @@ import {
   Delete as DeleteIcon,
   Pause as PauseIcon,
   PlayArrow as PlayIcon,
+  Refresh as RefreshIcon,
   AccessTime as TimeIcon,
 } from '@mui/icons-material';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useSSE } from '@/hooks/useSSE';
 
 interface MonitoredURL {
   urlId: string;
@@ -40,14 +42,25 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
   const [urls, setUrls] = useState<MonitoredURL[]>([]);
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
+  const { lastMessage } = useSSE('/api/events');
 
   useEffect(() => {
     loadURLs();
-    
-    // Atualizar a cada 30 segundos
-    const interval = setInterval(loadURLs, 30000);
-    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (lastMessage) {
+      const relevantEvents = [
+        'collection_completed',
+        'new_article',
+        'monitoring_started',
+        'monitoring_stopped',
+      ];
+      if (relevantEvents.includes(lastMessage.type)) {
+        loadURLs();
+      }
+    }
+  }, [lastMessage]);
 
   const loadURLs = async () => {
     try {
@@ -59,6 +72,32 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
       }
     } catch (error) {
       console.error('Erro ao carregar URLs:', error);
+    }
+  };
+
+  const handleRefresh = async (urlId: string) => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/monitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ urlId }),
+      });
+
+      const data = await response.json();
+
+      if (data.sucesso) {
+        // A atualização será feita via SSE, mas podemos forçar aqui também
+        await loadURLs();
+        onUpdate();
+      } else {
+        setErro(data.erro);
+      }
+    } catch (error) {
+      setErro('Erro ao atualizar URL');
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -143,6 +182,16 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
               }}
               secondaryAction={
                 <Box>
+                  <Tooltip title="Atualizar agora">
+                    <IconButton
+                      edge="end"
+                      onClick={() => handleRefresh(item.urlId)}
+                      disabled={loading}
+                      sx={{ mr: 1 }}
+                    >
+                      <RefreshIcon />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title={item.pausado ? 'Reativar' : 'Pausar'}>
                     <IconButton
                       edge="end"
@@ -200,3 +249,4 @@ export default function MonitoringPanel({ onUpdate }: MonitoringPanelProps) {
     </Paper>
   );
 }
+

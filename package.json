@@ -17,12 +17,14 @@
     "date-fns": "^2.30.0",
     "mongoose": "^8.19.1",
     "next": "^14.0.0",
+    "nodemailer": "^7.0.10",
     "openai": "^6.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "@types/nodemailer": "^7.0.3",
     "@types/react": "^18.2.0",
     "dotenv": "^17.2.3",
     "ts-node": "^10.9.2",

@@ -83,7 +83,7 @@ export default function NewsList({ refresh, onSelectChange, showRefactoredOnly, 
         setTotal(data.total);
 
         // Extrair categorias únicas
-        const cats = [...new Set(data.noticias.map((n: Noticia) => n.categoria))];
+        const cats: string[] = [...new Set<string>(data.noticias.map((n: Noticia) => n.categoria))];
         setCategorias(cats);
       } else {
         setErro(data.erro);
