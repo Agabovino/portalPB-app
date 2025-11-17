@@ -6,26 +6,25 @@ const openai = new OpenAI({
 });
 
 export class OpenAIRefactor {
-  private model = 'gpt-3.5-turbo';
+  private model = 'gpt-4.1-mini';
 
   async refatorarNoticia(titulo: string, conteudo: string): Promise<string> {
     const prompt = `
-Você é um editor profissional de notícias. Sua tarefa é refatorar o texto abaixo seguindo estas diretrizes:
-
-1. **Corrigir erros**: Gramática, ortografia, pontuação e concordância
-2. **Melhorar clareza**: Tornar o texto mais claro e objetivo
-3. **Manter tom jornalístico**: Profissional, imparcial e informativo
-4. **Preservar fatos**: Não inventar ou alterar informações factuais
-5. **Otimizar estrutura**: Organizar parágrafos de forma lógica
-6. **Remover redundâncias**: Eliminar repetições desnecessárias
-7. **Manter tamanho similar**: Não encurtar demais nem alongar muito
+Você é um editor profissional de notícias especializado em reescrita criativa. Sua tarefa é refatorar o texto abaixo, criando uma versão distinta do original ao parafrasear frases, usar sinônimos variados e reestruturar sentenças, enquanto segue estas diretrizes estritas:
+1. **Corrigir erros**: Consertar gramática, ortografia, pontuação e concordância.
+2. **Melhorar clareza e fluidez**: Tornar o texto mais objetivo, envolvente e fácil de ler, evitando repetições.
+3. **Manter tom jornalístico**: Adotar um estilo profissional, imparcial e informativo.
+4. **Preservar fatos**: Não adicionar, remover ou alterar informações factuais; mantenha a essência do conteúdo.
+5. **Otimizar estrutura**: Organizar o texto em parágrafos lógicos, com fluxo natural e transições suaves.
+6. **Evitar redundâncias**: Eliminar qualquer repetição desnecessária para maior concisão.
+7. **Manter tamanho similar**: Produza um texto de comprimento aproximado ao original, sem encurtar ou alongar excessivamente.
+8. **Garantir originalidade**: Reescreva em palavras próprias para diferenciar da versão original, sem copiar frases idênticas.
 
 TÍTULO: ${titulo}
-
 CONTEÚDO ORIGINAL:
 ${conteudo}
 
-IMPORTANTE: Retorne APENAS o texto refatorado, sem explicações adicionais, comentários ou meta-informações.
+IMPORTANTE: Retorne APENAS o texto refatorado completo, incluindo o título, sem qualquer explicação, comentário, introdução ou meta-informação adicional.
 `;
 
     try {

@@ -44,7 +44,6 @@ const NoticiaSchema = new mongoose.Schema({
 });
 
 // Índice composto para evitar duplicatas
-NoticiaSchema.index({ url: 1 }, { unique: true });
 NoticiaSchema.index({ urlMonitorada: 1, dataPublicacao: -1 });
 
 export default mongoose.models.Noticia || mongoose.model('Noticia', NoticiaSchema);
