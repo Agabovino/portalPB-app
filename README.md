@@ -2,11 +2,11 @@
 
 This is a Next.js application for monitoring news from various sources.
 
-## Getting Started
+## Getting Started 🚀
 
 Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
-### Running with Docker Compose (Recommended)
+### Running with Docker Compose (Recommended) 🐳
 
 This is the easiest and recommended way to run the project.
 
@@ -34,7 +34,9 @@ docker compose up -d
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
-### Manual Setup
+---
+
+### Manual Setup ⚙️
 
 If you prefer to run the project without Docker, follow these instructions.
 
@@ -53,7 +55,7 @@ This project requires a running MongoDB instance.
 If you don't have MongoDB installed, follow the official installation guide for your operating system:
 [Install MongoDB Community Edition](https://www.mongodb.com/docs/manual/installation/)
 
-**2. Running MongoDB**
+**2. Running MongoDB on Linux**
 
 On most Linux distributions using systemd (like Ubuntu), you can manage the MongoDB service with the following commands.
 
@@ -71,6 +73,16 @@ On most Linux distributions using systemd (like Ubuntu), you can manage the Mong
     ```bash
     sudo systemctl enable mongod
     ```
+
+**2. Running MongoDB on Windows**
+
+For Windows, you typically install MongoDB as a service. After installation, MongoDB usually starts automatically. You can manage it via the Services application (`services.msc`).
+
+*   **Start/Stop/Restart MongoDB Service:**
+    Open `services.msc`, find "MongoDB Server", right-click, and select the desired action.
+
+*   **Check MongoDB Status:**
+    You can check the MongoDB log file (usually in `C:\Program Files\MongoDB\Server\<version>\log`) or try connecting via `mongosh` (MongoDB Shell) in your command prompt.
 
 ### Project Setup
 
@@ -95,7 +107,7 @@ yarn install
 
 Create a file named `.env.local` in the root of the project. This file will hold your environment variables.
 
-Add your MongoDB connection string to this file. For a standard local installation, the string will look like this:
+Add your MongoDB connection string and OpenAI API key to this file. For a standard local installation, the string will look like this:
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/news-monitor
