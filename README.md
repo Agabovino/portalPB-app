@@ -17,7 +17,7 @@ This is the easiest and recommended way to run the project.
 
 **2. Environment Configuration**
 
-Create a file named `.env.local` in the root of the project. This file will hold your environment variables.
+Create a file named `.env` in the root of the project. This file will hold your environment variables.
 
 Add your MongoDB connection string and OpenAI API key to this file:
 
