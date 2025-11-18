@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  web:
+    build: 
+      context: .
+      args:
+        # Esta URI é usada apenas durante o build
+        MONGODB_URI: mongodb://db:27017/news-monitor
+    container_name: news-monitor-app
+    ports:
+      - "3000:3000"
+    environment:
+      # Esta URI é usada em tempo de execução
+      MONGODB_URI: mongodb://db:27017/news-monitor
+      # Adicione outras variáveis de ambiente aqui se necessário
+      # Ex: OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - db
+    networks:
+      - news_monitor_network
+    restart: unless-stopped
+
+  db:
+    image: mongo:latest
+    container_name: news-monitor-db
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - news_monitor_network
+    restart: unless-stopped
+
+networks:
+  news_monitor_network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local

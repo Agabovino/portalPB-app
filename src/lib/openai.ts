@@ -80,5 +80,3 @@ Retorne APENAS o resumo, sem prefixos como "Resumo:" ou outras explicações.
     }
   }
 }
-
-export default new OpenAIRefactor();

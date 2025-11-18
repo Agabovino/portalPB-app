@@ -3,7 +3,7 @@ import dbConnect from './db';
 import URLModel from '@/models/URL';
 import NoticiaModel from '@/models/Noticia';
 import scraper from './scraper';
-import openai from './openai';
+// import openai from './openai'; // Removido para importação dinâmica
 
 export class MonitoringService {
   private monitoringIntervals: Map<string, NodeJS.Timeout> = new Map();
@@ -143,6 +143,8 @@ export class MonitoringService {
           let resumo = noticia.resumo;
           if (!resumo && conteudoBruto) {
             try {
+              const { OpenAIRefactor } = await import('./openai');
+              const openai = new OpenAIRefactor();
               resumo = await openai.gerarResumo(noticia.titulo, conteudoBruto.substring(0, 1000));
             } catch (error) {
               console.error('Erro ao gerar resumo:', error);
